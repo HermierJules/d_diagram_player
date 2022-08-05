@@ -16,7 +16,13 @@ constraint columns;
 };
 typedef struct problem problem;
 int enum_popcount_byte[256];
-
+	problem p = {
+		0x000000000000000,
+		0x00000000000,
+		{ 3,2,5,3,4,1,4,4 },
+		{ 1,4,2,7,0,4,4,4 }
+	};
+board b = 3;
 board map_to_board(map m){
 	uint64_t pow = 1;
 	board b = 0x8000000000000000;
@@ -62,22 +68,30 @@ return x;
 
 void draw_board(problem* p, board b, sfSprite* wall, sfSprite* monster, sfSprite* treasure, sfSprite* empty, sfRenderWindow* window){
 	sfVector2f pos;
-	pos.x = 0;
-	pos.y = 0;
+	pos.x = 96;
+	pos.y = 96;
     for(int i = 0; i < 64; i++)
     {
 		
-        if (((p->monsters >> i) & 1) != 0)
+        if (((p->monsters >> i) & 1) != 0){
+			sfSprite_setPosition(monster, pos);
 			sfRenderWindow_drawSprite(window, monster, NULL);
-        else if (((p->treasures >> i) & 1) != 0)
+        }
+		else if (((p->treasures >> i) & 1) != 0){
+			sfSprite_setPosition(treasure, pos);
 			sfRenderWindow_drawSprite(window, treasure, NULL);
-        else if (((b >> i) & 1) != 0)
-            sfRenderWindow_drawSprite(window, monster, NULL);
-		else
+        }
+		else if (((b >> i) & 1) != 0){
+			sfSprite_setPosition(wall,pos);
+            sfRenderWindow_drawSprite(window, wall, NULL);
+		}
+		else{
+			sfSprite_setPosition(empty,pos);
 			sfRenderWindow_drawSprite(window, empty, NULL);
+		}
 		if(i%8 == 0) {
 			pos.y = pos.y + 16*6;
-			pos.x = 0;
+			pos.x = 96;
 		}
 		else pos.x = pos.x + 16*6;
 	}
@@ -86,8 +100,8 @@ void draw_board(problem* p, board b, sfSprite* wall, sfSprite* monster, sfSprite
 	
 
 int main(){
-    //16*16 tiles scaled by 6
-	sfVideoMode mode = {768, 768, 220};
+    //16*16 tiles scaled by 6, 9*9 grid
+	sfVideoMode mode = {864, 864, 220};
 	sfRenderWindow* window;
 	sfTexture* texture_wall;
 	sfTexture* texture_treasure;
@@ -98,6 +112,7 @@ int main(){
 	sfSprite* treasure;
 	sfSprite* monster;
 	sfVector2f scale;
+	sfEvent event;
 	scale.x = 6;
 	scale.y = 6;
 	//loading the textures
@@ -106,9 +121,32 @@ int main(){
 	texture_monster = sfTexture_createFromFile("./ressources/monster.png", NULL);
 	texture_empty = sfTexture_createFromFile("./ressources/empty.png", NULL);
 	//creating the sprites
-	sfSprite_
-
-
+	wall = sfSprite_create();
+	treasure =sfSprite_create();
+	empty = sfSprite_create();
+	monster =sfSprite_create();
+	//setting the texture
+	sfSprite_setTexture(wall,texture_wall,sfTrue);
+	sfSprite_setTexture(treasure, texture_treasure, sfTrue);
+	sfSprite_setTexture(empty, texture_empty, sfTrue);
+	sfSprite_setTexture(monster,texture_monster, sfTrue);
+	//setting the scale
+	sfSprite_setScale(monster,scale);
+	sfSprite_setScale(empty,scale);
+	sfSprite_setScale(treasure,scale);
+	sfSprite_setScale(wall,scale);
 	//destroying everything
+	//creating the window
+	window = sfRenderWindow_create(mode, "dungeons and diagrams", sfResize | sfClose, NULL);
+	while(sfRenderWindow_isOpen(window)){
+		while(sfRenderWindow_pollEvent(window, &event)){
+			/*close window: exit*/
+			if(event.type == sfEvtClosed)
+				sfRenderWindow_close(window);
+		}
+		sfRenderWindow_clear(window, sfBlack);
+		draw_board(&p, b, wall, monster, treasure, empty, window);
+	sfRenderWindow_display(window);
+	}
 	return 0;
 }
