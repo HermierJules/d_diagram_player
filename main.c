@@ -91,12 +91,24 @@ int main(){
 	sfRenderWindow* window;
 	sfTexture* texture_wall;
 	sfTexture* texture_treasure;
-	sfTexture* texture_monstrer;
+	sfTexture* texture_monster;
+	sfTexture* texture_empty;
 	sfSprite* wall;
+	sfSprite* empty;
 	sfSprite* treasure;
 	sfSprite* monster;
 	sfVector2f scale;
 	scale.x = 6;
 	scale.y = 6;
+	//loading the textures
+		texture_wall = sfTexture_createFromFile("./ressources/wall.png", NULL);
+		texture_treasure = sfTexture_createFromFile("./ressources/treasure.png", NULL);	
+	texture_monster = sfTexture_createFromFile("./ressources/monster.png", NULL);
+	texture_empty = sfTexture_createFromFile("./ressources/empty.png", NULL);
+	//creating the sprites
+	sfSprite_
+
+
+	//destroying everything
 	return 0;
 }
