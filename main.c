@@ -17,8 +17,8 @@ constraint columns;
 typedef struct problem problem;
 int enum_popcount_byte[256];
 	problem p = {
-		0x000000000000000,
-		0x00000000000,
+		0x00000500000000,
+		0x00000000500,
 		{ 3,2,5,3,4,1,4,4 },
 		{ 1,4,2,7,0,4,4,4 }
 	};
@@ -70,9 +70,11 @@ void draw_board(problem* p, board b, sfSprite* wall, sfSprite* monster, sfSprite
 	sfVector2f pos;
 	pos.x = 96;
 	pos.y = 96;
-    for(int i = 0; i < 64; i++)
+    for(int i = 0; i <= 64; i++)
     {
 		
+			sfSprite_setPosition(empty,pos);
+			sfRenderWindow_drawSprite(window, empty, NULL);
         if (((p->monsters >> i) & 1) != 0){
 			sfSprite_setPosition(monster, pos);
 			sfRenderWindow_drawSprite(window, monster, NULL);
@@ -85,11 +87,7 @@ void draw_board(problem* p, board b, sfSprite* wall, sfSprite* monster, sfSprite
 			sfSprite_setPosition(wall,pos);
             sfRenderWindow_drawSprite(window, wall, NULL);
 		}
-		else{
-			sfSprite_setPosition(empty,pos);
-			sfRenderWindow_drawSprite(window, empty, NULL);
-		}
-		if(i%8 == 0) {
+		if(i%8 == 0 && i!= 0) {
 			pos.y = pos.y + 16*6;
 			pos.x = 96;
 		}
