@@ -87,8 +87,21 @@ x = (x&m3) + ((x&(m3<<4))>>4);
 return x;	
 }
 
-void draw_board(problem* p, board b, sfSprite* wall, sfSprite* monster, sfSprite* treasure, sfSprite* empty, sfRenderWindow* window){
+void draw_board(problem* p, board b, sfSprite* wall, sfSprite* monster, sfSprite* treasure, sfSprite* empty, sfFont* font,sfRenderWindow* window){
+	char str[96];
 	sfVector2f pos;
+	sfVector2f postext;
+	postext.x = 0;
+	postext.y = 0;
+	sfText* text;
+	text = sfText_create();
+	sfText_setColor(text, sfWhite);
+	sfText_setFont(text,font);
+	sfText_setCharacterSize(text,96);
+	sprintf(str," %d%d%d%d%d%d%d%d\n%d\n%d\n%d\n%d\n%d\n%d\n%d",p->rows[0], p->rows[1], p->rows[2], p->rows[3], p->rows[4], p->rows[5], p->rows[6], p->rows[7], p->columns[0], p->columns[1], p->columns[2], p->columns[3], p->columns[4], p->columns[5], p->columns[6], p->columns[7]);
+	sfText_setPosition(text,postext);
+	sfText_setString(text,str);
+	sfRenderWindow_drawText(window,text,NULL);
 	pos.x = 0;
 	pos.y = 96;
     for(int i = 0; i < 64; i++)
@@ -113,6 +126,7 @@ void draw_board(problem* p, board b, sfSprite* wall, sfSprite* monster, sfSprite
             sfRenderWindow_drawSprite(window, wall, NULL);
 		}
 	}
+	sfText_destroy(text);
 }
 	
 
@@ -128,12 +142,15 @@ p.treasures = map_to_board(treasures);
 	sfTexture* texture_empty;
 	sfSprite* wall;
 	sfSprite* empty;
+	sfFont* font;
 	sfSprite* treasure;
 	sfSprite* monster;
 	sfVector2f scale;
 	sfEvent event;
 	scale.x = 6;
 	scale.y = 6;
+	map walls;
+	board_to_map(b, walls);
 	//loading the textures
 		texture_wall = sfTexture_createFromFile("./ressources/wall.png", NULL);
 		texture_treasure = sfTexture_createFromFile("./ressources/treasure.png", NULL);	
@@ -155,6 +172,8 @@ p.treasures = map_to_board(treasures);
 	sfSprite_setScale(treasure,scale);
 	sfSprite_setScale(wall,scale);
 	//destroying everything
+	//creating the font
+	font = sfFont_createFromFile("./ressources/pixel.ttf");
 	//creating the window
 	window = sfRenderWindow_create(mode, "dungeons and diagrams", sfResize | sfClose, NULL);
 	while(sfRenderWindow_isOpen(window)){
@@ -164,7 +183,7 @@ p.treasures = map_to_board(treasures);
 				sfRenderWindow_close(window);
 		}
 		sfRenderWindow_clear(window, sfBlack);
-		draw_board(&p, b, wall, monster, treasure, empty, window);
+		draw_board(&p, b, wall, monster, treasure, empty,font, window);
 	sfRenderWindow_display(window);
 	}
 	return 0;
