@@ -15,17 +15,38 @@ constraint rows;
 constraint columns;
 };
 typedef struct problem problem;
+
+map monsters = {
+0, 0, 0, 0, 0, 0, 0, 0,
+0, 0, 0, 0, 0, 0, 0, 1,
+0, 0, 1, 0, 0, 0, 0, 0,
+0, 0, 0, 0, 0, 0, 0, 1,
+0, 0, 0, 0, 0, 0, 0, 0,
+0, 0, 0, 0, 0, 0, 0, 1,
+0, 0, 0, 0, 0, 0, 0, 0,
+0, 0, 0, 0, 0, 0, 0, 1,
+};
+map treasures = {
+0, 0, 0, 0, 0, 0, 1, 0,
+0, 0, 0, 0, 0, 0, 0, 0,
+0, 0, 1, 0, 0, 0, 0, 0,
+0, 0, 0, 0, 0, 0, 0, 0,
+0, 0, 0, 0, 0, 0, 0, 0,
+0, 0, 0, 0, 0, 0, 0, 0,
+0, 0, 0, 0, 0, 0, 0, 0,
+0, 0, 0, 0, 0, 0, 0, 0,
+};
 int enum_popcount_byte[256];
-	problem p = {
-		0x00000500000000,
-		0x00000000500,
+problem p = {
+		8000800080048000,
+		0x0000000000,
 		{ 3,2,5,3,4,1,4,4 },
 		{ 1,4,2,7,0,4,4,4 }
 	};
-board b = 3;
+board b = 5;
 board map_to_board(map m){
 	uint64_t pow = 1;
-	board b = 0x8000000000000000;
+	board b = 0x00000000000000;
 	for(int i = 0; i < 64; i ++)
 	{
 		b = b + pow * m[i];
@@ -68,11 +89,15 @@ return x;
 
 void draw_board(problem* p, board b, sfSprite* wall, sfSprite* monster, sfSprite* treasure, sfSprite* empty, sfRenderWindow* window){
 	sfVector2f pos;
-	pos.x = 96;
+	pos.x = 0;
 	pos.y = 96;
-    for(int i = 0; i <= 64; i++)
+    for(int i = 0; i < 64; i++)
     {
-		
+		if(i%8 == 0 && i!= 0) {
+			pos.y = pos.y + 16*6;
+			pos.x = 96;
+		}
+		else pos.x = pos.x + 16*6;
 			sfSprite_setPosition(empty,pos);
 			sfRenderWindow_drawSprite(window, empty, NULL);
         if (((p->monsters >> i) & 1) != 0){
@@ -87,17 +112,13 @@ void draw_board(problem* p, board b, sfSprite* wall, sfSprite* monster, sfSprite
 			sfSprite_setPosition(wall,pos);
             sfRenderWindow_drawSprite(window, wall, NULL);
 		}
-		if(i%8 == 0 && i!= 0) {
-			pos.y = pos.y + 16*6;
-			pos.x = 96;
-		}
-		else pos.x = pos.x + 16*6;
 	}
 }
 	
-	
 
 int main(){
+p.monsters = map_to_board(monsters);
+p.treasures = map_to_board(treasures);	
     //16*16 tiles scaled by 6, 9*9 grid
 	sfVideoMode mode = {864, 864, 220};
 	sfRenderWindow* window;
