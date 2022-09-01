@@ -167,6 +167,7 @@ void print_board(problem *p, board b)
 	}
 }
 
+
 int enum_popcount_byte[256];
 
 uint64_t bit(int pos)
@@ -208,7 +209,7 @@ bool test_columns_overload(problem *p, board b)
 {
     int current;
 	for(int i = 0; i < 8; i++){
-		current = popcount(mask_column(i, b));
+		current = __builtin_popcount(mask_column(i, b));
 		if(current > p->columns[i])
 			return true;
 	}
@@ -219,8 +220,8 @@ bool test_columns_underload(problem *p, board b)
 {
     int current;
 	for(int i = 0; i < 8; i++){
-		current=popcount(mask_line(i,b));
-		if(current < p->rows[i])
+		current=__builtin_popcount(mask_column(i,b));
+		if(current < p->columns[i])
 			return true;
 	}
 	return false;
@@ -330,7 +331,11 @@ void draw_board(problem* p, board b, sfSprite* wall, sfSprite* monster_sprite, s
 		else pos.x = pos.x + 16*6;
 			sfSprite_setPosition(empty_sprite,pos);
 			sfRenderWindow_drawSprite(window, empty_sprite, NULL);
-        if (((p->monsters >> i) & 1) != 0){
+		if (((b >> i) & 1) != 0){
+			sfSprite_setPosition(wall,pos);
+            sfRenderWindow_drawSprite(window, wall, NULL);
+		}
+        else if (((p->monsters >> i) & 1) != 0){
 			sfSprite_setPosition(monster_sprite, pos);
 			sfRenderWindow_drawSprite(window, monster_sprite, NULL);
         }
@@ -338,10 +343,7 @@ void draw_board(problem* p, board b, sfSprite* wall, sfSprite* monster_sprite, s
 			sfSprite_setPosition(treasure, pos);
 			sfRenderWindow_drawSprite(window, treasure, NULL);
         }
-		else if (((b >> i) & 1) != 0){
-			sfSprite_setPosition(wall,pos);
-            sfRenderWindow_drawSprite(window, wall, NULL);
-		}
+		
 	}
 	sfText_destroy(text);
 }
@@ -367,8 +369,8 @@ void solve(problem *p, int row, board b)
     {
         printf("end");
         // Validate columns count
-        //if (test_columns_underload(p, b))
-          //  return;
+        if (test_columns_underload(p, b))
+            return;
 
         // Full board with monsters
         board fb = b | p->monsters;
@@ -382,6 +384,7 @@ void solve(problem *p, int row, board b)
 
         printf("Solution %lx\n", b); 
         print_board(p, b);
+		sleep(50);
 
         return;
     }
@@ -402,9 +405,9 @@ void solve(problem *p, int row, board b)
 }
 
 int main(){
-	wait = sfSeconds(.1);
+	wait = sfSeconds(.0);
 for(int i = 0; i < 256; i++){
-        enum_popcount_byte[i] = popcount(i);
+        enum_popcount_byte[i] = __builtin_popcount(i);
     
     }
     problem *problems[] = {
