@@ -316,7 +316,7 @@ void draw_board(problem* p, board b, sfSprite* wall, sfSprite* monster_sprite, s
 	sfText_setColor(text, sfWhite);
 	sfText_setFont(text,font);
 	sfText_setCharacterSize(text,96);
-	sprintf(str," %d%d%d%d%d%d%d%d\n%d\n%d\n%d\n%d\n%d\n%d\n%d",p->rows[0], p->rows[1], p->rows[2], p->rows[3], p->rows[4], p->rows[5], p->rows[6], p->rows[7], p->columns[0], p->columns[1], p->columns[2], p->columns[3], p->columns[4], p->columns[5], p->columns[6], p->columns[7]);
+	sprintf(str," %d%d%d%d%d%d%d%d\n%d\n%d\n%d\n%d\n%d\n%d\n%d",p->columns[1], p->columns[2], p->columns[3], p->columns[4], p->columns[5], p->columns[6], p->columns[7],p->rows[0], p->rows[1], p->rows[2], p->rows[3], p->rows[4], p->rows[5], p->rows[6], p->rows[7], p->columns[0]);
 	sfText_setPosition(text,postext);
 	sfText_setString(text,str);
 	sfRenderWindow_drawText(window,text,NULL);
